@@ -4,6 +4,16 @@ using System.Text.Json.Serialization;
 using System.Collections.Generic;
 namespace ScratchSharp {
     namespace Types {
+
+        /*
+        I think it's worth mentioning that I don't truly understand Scratch's Compiler, nor do I have
+        The full source code. All that I have is the project (.SB3) files, and the project json's by extension.
+        I don't entirely know how it works, and do not modify the scratch source code at all, only use C# to
+        translate into something I know the compiler can read. Anyway, that's it, legal stuff out of the way,
+        heres my crappy code :)
+        */
+
+
         public class Stage {
             public bool isStage {get; set;}
             public string name {get; set;}
@@ -237,6 +247,11 @@ namespace ScratchSharp {
                 minimized = false;
             }
         }
+        ///<summary>
+        /// The most important class of all,
+        /// holds all the Blocks you'd drag/drop in
+        /// normal scratch
+        ///</summary>
         public abstract class Block {
             // general block properties
             private string ID {get; set;}
@@ -247,6 +262,87 @@ namespace ScratchSharp {
             public Dictionary<string, List<object>> fields {get; private set;}
             public bool shadow {get; private set;}
             public bool topLevel {get; private set;}
+
+            public class ChangeEffectBy : Block {
+                public enum Effects {
+                    COLOR,
+                    FISHEYE,
+                    WHIRL,
+                    PIXELATE,
+                    MOSAIC,
+                    BRIGHTNESS,
+                    GHOST
+                };
+                public ChangeEffectBy(int changeby, Effects effect){
+                    string effectname = nameof(effect);
+                    fields = new Dictionary<string, List<object>>(); // has effect
+                    inputs = new Dictionary<string, List<object>>(); // has changeby value
+                    var flis = new List<object>();
+                    flis.Add(effectname);
+                    flis.Add(null);
+                    fields.Add("EFFECT", flis);
+                    var inlis = new List<object>();
+                    inlis.Add(1);
+                    inlis.Add(new List<object>() {4, changeby.ToString()});
+                    inputs.Add("CHANGE", inlis);
+                }
+            }
+            public class ChangeSizeTo : Block {
+                public ChangeSizeTo(int size){
+                    opcode = "looks_setsizeto";
+                    inputs = new Dictionary<string, List<object>>();
+                    fields = new Dictionary<string, List<object>>();
+                    var ls = new List<object>();
+                    ls.Add(1);
+                    ls.Add(new List<object>() {4, size.ToString()});
+                    inputs.Add("SIZE", ls);
+                    shadow = false;
+                    topLevel = false;
+                }
+            }
+            public class ChangeSizeBy : Block {
+                public ChangeSizeBy(int size){
+                    opcode = "looks_changesizeby";
+                    inputs = new Dictionary<string, List<object>>();
+                    fields = new Dictionary<string, List<object>>();
+                    var ls = new List<object>();
+                    ls.Add(1);
+                    ls.Add(new List<object>() {4, size.ToString()});
+                    inputs.Add("CHANGE", ls);
+                    shadow = false;
+                    topLevel = false;
+                }
+            }
+            public class ChangeBackdrop : Block {
+                BackDrop backDrop {get; set;}
+                public ChangeBackdrop(Costume new_backdrop){
+                    ID = Text.GenerateID();
+                    backDrop = new BackDrop(new_backdrop, this.ID);
+                    opcode = "looks_switchbackdropto";
+                    inputs = new Dictionary<string, List<object>>();
+                    var ls = new List<object>();
+                    ls.Add(1);
+                    ls.Add(backDrop.getID());
+                    inputs.Add("BACKDROP", ls);
+                    fields = new Dictionary<string, List<object>>();
+                    shadow = false;
+                    topLevel = false;
+                }
+            }
+            private class BackDrop : Block {
+                public BackDrop(Costume new_backdrop, string parentID){
+                    ID = Text.GenerateID();
+                    opcode = "looks_backdrops";
+                    List<object> ls = new List<object>();
+                    ls.Add(new List<object> {new_backdrop.name, null});
+                    inputs = new Dictionary<string, List<object>>();
+                    fields = new Dictionary<string, List<object>>();
+                    fields.Add("BACKDROP", ls);
+                    shadow = false;
+                    topLevel = false;
+                    parent = parentID;
+                }
+            }
 
             public class Say : Block {
                 // say for secs
