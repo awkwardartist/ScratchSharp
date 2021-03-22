@@ -1,0 +1,12 @@
+C:\Users\awkward\Desktop\Scratch\TTS-Text To Scratch\obj\Debug\net5.0\TTS-Text To Scratch.csprojAssemblyReference.cache
+C:\Users\awkward\Desktop\Scratch\TTS-Text To Scratch\obj\Debug\net5.0\TTS-Text To Scratch.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\awkward\Desktop\Scratch\TTS-Text To Scratch\obj\Debug\net5.0\TTS-Text To Scratch.AssemblyInfoInputs.cache
+C:\Users\awkward\Desktop\Scratch\TTS-Text To Scratch\obj\Debug\net5.0\TTS-Text To Scratch.AssemblyInfo.cs
+C:\Users\awkward\Desktop\Scratch\TTS-Text To Scratch\obj\Debug\net5.0\TTS-Text To Scratch.csproj.CoreCompileInputs.cache
+C:\Users\awkward\Desktop\Scratch\TTS-Text To Scratch\bin\Debug\net5.0\ScratchSharp.deps.json
+C:\Users\awkward\Desktop\Scratch\TTS-Text To Scratch\bin\Debug\net5.0\ScratchSharp.dll
+C:\Users\awkward\Desktop\Scratch\TTS-Text To Scratch\bin\Debug\net5.0\ref\ScratchSharp.dll
+C:\Users\awkward\Desktop\Scratch\TTS-Text To Scratch\bin\Debug\net5.0\ScratchSharp.pdb
+C:\Users\awkward\Desktop\Scratch\TTS-Text To Scratch\obj\Debug\net5.0\ScratchSharp.dll
+C:\Users\awkward\Desktop\Scratch\TTS-Text To Scratch\obj\Debug\net5.0\ref\ScratchSharp.dll
+C:\Users\awkward\Desktop\Scratch\TTS-Text To Scratch\obj\Debug\net5.0\ScratchSharp.pdb
