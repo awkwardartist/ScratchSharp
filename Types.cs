@@ -262,7 +262,133 @@ namespace ScratchSharp {
             public Dictionary<string, List<object>> fields {get; private set;}
             public bool shadow {get; private set;}
             public bool topLevel {get; private set;}
+            
+            public class GoBackLayers : Block {
+                public GoBackLayers(int layers){
+                    opcode = "looks_goforwardbackwardlayers";
+                    var ls = new List<object>();
+                    inputs = new Dictionary<string, List<object>>();
+                    fields = new Dictionary<string, List<object>>();
+                    ls.Add(1);
+                    ls.Add(new List<object>() {7, layers.ToString()});
+                    inputs.Add("NUM", ls);
 
+                    ls = new List<object>();
+                    ls.Add("backward");
+                    ls.Add(null);
+                    fields.Add("FORWARD_BACKWARD", ls);
+                }
+            }
+            public class GoForwardLayers : Block {
+                public GoForwardLayers(int layers){
+                    opcode = "looks_goforwardbackwardlayers";
+                    var ls = new List<object>();
+                    inputs = new Dictionary<string, List<object>>();
+                    fields = new Dictionary<string, List<object>>();
+                    ls.Add(1);
+                    ls.Add(new List<object>() {7, layers.ToString()});
+                    inputs.Add("NUM", ls);
+
+                    ls = new List<object>();
+                    ls.Add("forward");
+                    ls.Add(null);
+                    fields.Add("FORWARD_BACKWARD", ls);
+
+                    shadow = false;
+                    topLevel = false;
+                }
+            }
+            public class NextBackdrop : Block {
+                public NextBackdrop(){
+                    ID = Text.GenerateID();
+                    inputs = new Dictionary<string, List<object>>();
+                    fields = new Dictionary<string, List<object>>();
+                    opcode = "looks_nextbackdrop";
+                    shadow = false;
+                    topLevel = false;
+                }
+            }
+            public class GoToBackLayer : Block {
+                public GoToBackLayer(){
+                    opcode = "looks_gotofrontback";
+                    inputs = new Dictionary<string, List<object>>();
+                    fields = new Dictionary<string, List<object>>();
+                    shadow = false;
+                    topLevel = true;
+                    var ls = new List<object>();
+                    ls.Add("back");
+                    ls.Add(null);
+                    fields.Add("FRONT_BACK", ls);
+                }
+            }
+            public class GoToFrontLayer : Block {
+                public GoToFrontLayer(){
+                    opcode = "looks_gotofrontback";
+                    inputs = new Dictionary<string, List<object>>();
+                    fields = new Dictionary<string, List<object>>();
+                    shadow = false;
+                    topLevel = true;
+                    var ls = new List<object>();
+                    ls.Add("front");
+                    ls.Add(null);
+                    fields.Add("FRONT_BACK", ls);
+                }
+            }
+            public class Hide : Block {
+                public Hide(){
+                    opcode = "looks_hide";
+                    inputs = new Dictionary<string, List<object>>();
+                    fields = new Dictionary<string, List<object>>();
+                    shadow = false;
+                    topLevel = false;
+                }
+            }
+            public class Show : Block {
+                public Show(){
+                    opcode = "looks_show";
+                    inputs = new Dictionary<string, List<object>>();
+                    fields = new Dictionary<string, List<object>>();
+                    shadow = false;
+                    topLevel = false;
+                }
+            }
+            public class ClearGraphicsEffects : Block {
+                public ClearGraphicsEffects(){
+                    opcode = "looks_cleargraphiceffects";
+                    inputs = new Dictionary<string, List<object>>();
+                    fields = new Dictionary<string, List<object>>();
+                    shadow = false;
+                    topLevel = false;
+                }
+            }
+            public class SetEffectTo : Block {
+                public enum Effects {
+                    COLOR,
+                    FISHEYE,
+                    WHIRL,
+                    PIXELATE,
+                    MOSAIC,
+                    BRIGHTNESS,
+                    GHOST
+                };
+                public SetEffectTo(int changeto, Effects effect){
+                    opcode = "looks_seteffectto";
+                    var ls = new List<object>();
+                    ls.Add(1);
+                    ls.Add(new List<object>() {4, changeto.ToString()});
+
+                    inputs = new Dictionary<string, List<object>>();
+                    fields = new Dictionary<string, List<object>>();
+
+                    inputs.Add("VALUE", ls);
+
+                    ls = new List<object>();
+                    ls.AddRange(new List<object>() {nameof(effect), null});
+                    fields.Add("EFFECT", ls);
+                    shadow = false;
+                    topLevel = false;
+                }
+            }
             public class ChangeEffectBy : Block {
                 public enum Effects {
                     COLOR,
@@ -285,6 +411,8 @@ namespace ScratchSharp {
                     inlis.Add(1);
                     inlis.Add(new List<object>() {4, changeby.ToString()});
                     inputs.Add("CHANGE", inlis);
+                    shadow = false;
+                    topLevel = false;
                 }
             }
             public class ChangeSizeTo : Block {
@@ -327,6 +455,16 @@ namespace ScratchSharp {
                     fields = new Dictionary<string, List<object>>();
                     shadow = false;
                     topLevel = false;
+                }
+            }
+            public class NextCostume : Block {
+                public NextCostume(){
+                    ID = Text.GenerateID();
+                    inputs = new Dictionary<string, List<object>>();
+                    fields = new Dictionary<string, List<object>>();
+                    opcode = "looks_nextcostume";
+                    topLevel = false;
+                    shadow = false;
                 }
             }
             private class BackDrop : Block {
