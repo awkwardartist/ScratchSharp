@@ -263,6 +263,7 @@ namespace ScratchSharp {
             public bool shadow {get; private set;}
             public bool topLevel {get; private set;}
             
+            
             public class GoBackLayers : Block {
                 public GoBackLayers(int layers){
                     opcode = "looks_goforwardbackwardlayers";
@@ -277,6 +278,75 @@ namespace ScratchSharp {
                     ls.Add("backward");
                     ls.Add(null);
                     fields.Add("FORWARD_BACKWARD", ls);
+                    ID = Text.GenerateID();
+                }
+            }
+            public class WhenBgChangeTo : Block {
+                public WhenBgChangeTo(Costume bg){
+                    string name = bg.name;
+                    opcode = "event_whenbackdropswitchesto";
+                    shadow = false;
+                    topLevel = true;
+                    var ls = new List<object>();
+                    ls.Add(name);
+                    ls.Add(null);
+                    inputs = new Dictionary<string, List<object>>();
+                    fields = new Dictionary<string, List<object>>();
+                    fields.Add("BACKDROP", ls);
+                    ID = Text.GenerateID();
+                }
+            }
+            public class WhenSpriteClicked : Block {
+                public WhenSpriteClicked(){
+                    opcode = "event_whenthisspriteclicked";
+                    inputs = new Dictionary<string, List<object>>();
+                    fields = new Dictionary<string, List<object>>();
+                    shadow = false;
+                    topLevel = true;
+                    ID = Text.GenerateID();
+                }
+            }
+            public class WhenKeyPressed : Block {
+                public enum Keys {
+                    space, any, left_arrow, right_arrow, up_arrow,
+                    down_arrow, a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r,
+                    s, t, u, v, w, x, y, z, k1, k2, k3, k4, k5, k6, k7, k8, k9, k0,  
+                };
+                public WhenKeyPressed(Keys key){
+                    opcode = "event_whenkeypressed";
+                    inputs = new Dictionary<string, List<object>>();
+                    fields = new Dictionary<string, List<object>>();
+                    var ls = new List<object>();
+                    shadow = false;
+                    topLevel = true;
+                    string trueKeyName = string.Empty;
+                    switch(key){
+                        case Keys.left_arrow:
+                        case Keys.right_arrow:
+                        case Keys.up_arrow:
+                        case Keys.down_arrow:
+                            trueKeyName = nameof(key).Replace("_", " ");
+                            break;
+                        case Keys.k1:
+                        case Keys.k2:
+                        case Keys.k3:
+                        case Keys.k4:
+                        case Keys.k5:
+                        case Keys.k6:
+                        case Keys.k7:
+                        case Keys.k8:
+                        case Keys.k9:
+                        case Keys.k0:
+                            trueKeyName = nameof(key).Replace("k", "");
+                            break;
+                        default:
+                            trueKeyName = nameof(key);
+                            break;
+                    }
+                    ls.Add(trueKeyName);
+                    ls.Add(null);
+                    fields.Add("KEY_OPTION", ls);
+                    ID = Text.GenerateID();
                 }
             }
             public class GoForwardLayers : Block {
@@ -296,6 +366,7 @@ namespace ScratchSharp {
 
                     shadow = false;
                     topLevel = false;
+                    ID = Text.GenerateID();
                 }
             }
             public class NextBackdrop : Block {
@@ -319,6 +390,7 @@ namespace ScratchSharp {
                     ls.Add("back");
                     ls.Add(null);
                     fields.Add("FRONT_BACK", ls);
+                    ID = Text.GenerateID();
                 }
             }
             public class GoToFrontLayer : Block {
@@ -332,6 +404,7 @@ namespace ScratchSharp {
                     ls.Add("front");
                     ls.Add(null);
                     fields.Add("FRONT_BACK", ls);
+                    ID = Text.GenerateID();
                 }
             }
             public class Hide : Block {
@@ -341,6 +414,7 @@ namespace ScratchSharp {
                     fields = new Dictionary<string, List<object>>();
                     shadow = false;
                     topLevel = false;
+                    ID = Text.GenerateID();
                 }
             }
             public class Show : Block {
@@ -350,6 +424,7 @@ namespace ScratchSharp {
                     fields = new Dictionary<string, List<object>>();
                     shadow = false;
                     topLevel = false;
+                    ID = Text.GenerateID();
                 }
             }
             public class ClearGraphicsEffects : Block {
@@ -359,6 +434,7 @@ namespace ScratchSharp {
                     fields = new Dictionary<string, List<object>>();
                     shadow = false;
                     topLevel = false;
+                    ID = Text.GenerateID();
                 }
             }
             public class SetEffectTo : Block {
@@ -387,6 +463,7 @@ namespace ScratchSharp {
                     fields.Add("EFFECT", ls);
                     shadow = false;
                     topLevel = false;
+                    ID = Text.GenerateID();
                 }
             }
             public class ChangeEffectBy : Block {
@@ -413,6 +490,7 @@ namespace ScratchSharp {
                     inputs.Add("CHANGE", inlis);
                     shadow = false;
                     topLevel = false;
+                    ID = Text.GenerateID();
                 }
             }
             public class ChangeSizeTo : Block {
@@ -426,6 +504,7 @@ namespace ScratchSharp {
                     inputs.Add("SIZE", ls);
                     shadow = false;
                     topLevel = false;
+                    ID = Text.GenerateID();
                 }
             }
             public class ChangeSizeBy : Block {
@@ -439,6 +518,7 @@ namespace ScratchSharp {
                     inputs.Add("CHANGE", ls);
                     shadow = false;
                     topLevel = false;
+                    ID = Text.GenerateID();
                 }
             }
             public class ChangeBackdrop : Block {
@@ -454,6 +534,7 @@ namespace ScratchSharp {
                     inputs.Add("BACKDROP", ls);
                     fields = new Dictionary<string, List<object>>();
                     shadow = false;
+                    ID = Text.GenerateID();
                     topLevel = false;
                 }
             }
