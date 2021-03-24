@@ -248,15 +248,27 @@ namespace ScratchSharp {
             }
         }
        ///<summary> Links a blockchain to a control
-       /// method like "if, while, until"</summary>
+       /// method like "if, while, until". BeforeControl is the
+       /// block that comes before the control block.</summary>
         public class ControlChain {
             private BlockChain Chain {get; set;}
-            public ControlChain(Block Control, BlockChain bodyChain){
+            public ControlChain(Block Control, BlockChain bodyChain, Block beforeControl = null, BlockChain elseChain = null){
+                Control.parent = beforeControl.getID();
                 var ls = new List<object>();
                 var Body = bodyChain.Chain;
                 ls.Add(2);
                 ls.Add(Body[0].getID());
                 Control.inputs["SUBSTACK"] = ls;
+                if(Control.inputs.ContainsKey("SUBSTACK2")){
+                    ls = new List<object>();
+                    ls.Add(2);
+                    ls.Add(elseChain.Chain[0].getID());
+                    Control.inputs["SUBSTACK2"] = ls;
+                    var ls2 = new List<Block>();
+                    ls2.AddRange(Body);
+                    ls2.AddRange(elseChain.Chain);
+                    Body = ls2.ToArray();
+                }
                 var ret = new List<Block>();
                 ret.Add(Control);
                 ret.AddRange(Body);
@@ -284,8 +296,171 @@ namespace ScratchSharp {
             public Dictionary<string, List<object>> fields {get; set;}
             public bool shadow {get; set;}
             public bool topLevel {get; set;}
-            
 
+            public Block(){
+                this.ID = Text.GenerateID();
+                shadow = false;
+                topLevel = false;
+                inputs = new Dictionary<string, List<object>>();
+                fields = new Dictionary<string, List<object>>();
+            }
+
+            private class Under_Operator : Block {
+                public Under_Operator(object left_cond, object right_cond){
+                    inputs = new Dictionary<string, List<object>>();
+                    fields = new Dictionary<string, List<object>>();
+                    var ls = new List<object>();
+                    ls.Add(1);
+                    ls.Add(new List<object>() {10, left_cond.ToString()});
+                    inputs.Add("OPERAND1", ls);
+
+                    ls = new List<object>();
+                    ls.Add(1);
+                    ls.Add(new List<object>() {10, right_cond.ToString()});
+                    inputs.Add("OPERAND2", ls);
+                    opcode = "operator_lt";
+                    ID = Text.GenerateID();
+                    shadow = false;
+                    topLevel = false;
+                }
+            }
+            private class Over_Operator : Block {
+                public Over_Operator(object left_cond, object right_cond){
+                    inputs = new Dictionary<string, List<object>>();
+                    fields = new Dictionary<string, List<object>>();
+                    var ls = new List<object>();
+                    ls.Add(1);
+                    ls.Add(new List<object>() {10, left_cond.ToString()});
+                    inputs.Add("OPERAND1", ls);
+
+                    ls = new List<object>();
+                    ls.Add(1);
+                    ls.Add(new List<object>() {10, right_cond.ToString()});
+                    inputs.Add("OPERAND2", ls);
+                    opcode = "operator_gt";
+                    ID = Text.GenerateID();
+                    shadow = false;
+                    topLevel = false;
+                }
+            }
+            private class Equals_Operator : Block {
+                public Equals_Operator(object left_cond, object right_cond){
+                    inputs = new Dictionary<string, List<object>>();
+                    fields = new Dictionary<string, List<object>>();
+                    var ls = new List<object>();
+                    ls.Add(1);
+                    ls.Add(new List<object>() {10, left_cond.ToString()});
+                    inputs.Add("OPERAND1", ls);
+
+                    ls = new List<object>();
+                    ls.Add(1);
+                    ls.Add(new List<object>() {10, right_cond.ToString()});
+                    inputs.Add("OPERAND2", ls);
+                    opcode = "operator_equals";
+                    ID = Text.GenerateID();
+                    shadow = false;
+                    topLevel = false;
+                }
+            }
+            
+            public class DeleteThisClone : Block {
+                public DeleteThisClone(){
+                    opcode = "control_delete_this_clone";
+                    inputs = new Dictionary<string, List<object>>();
+                    fields = new Dictionary<string, List<object>>();
+                    shadow = false;
+                    topLevel = false;
+                }
+            }
+            public class Stop : Block {
+                public string tagName {get; set;}
+                public List<object> children {get; set;}
+                public string hasnext {get; set;}
+                public enum StopOption {
+                    ThisScript,
+                    OthersInSprite,
+                }
+                public Stop(StopOption option){
+                    opcode = "control_stop";
+                    fields = new Dictionary<string, List<object>>();
+                    inputs = new Dictionary<string, List<object>>();
+                    List<object> ls;
+                    if(option == StopOption.ThisScript)
+                        ls = new List<object>() {"this script", null}; 
+                    else
+                        ls = new List<object>() {"other scripts in sprite", null};
+                    fields.Add("STOP_OPTION", ls);
+                    hasnext = "false";
+                    tagName = "mutation";
+                }
+            }
+            public class IfElse_Block : Block {
+                public enum Operators {
+                    OVER,
+                    UNDER,
+                    EQUALS
+                };
+                public IfElse_Block(object cond1, Operators op, object cond2){
+                    inputs = new Dictionary<string, List<object>>();
+                    fields = new Dictionary<string, List<object>>();
+                    topLevel = false;
+                    shadow = false;
+                    var ls = new List<object>();
+                    ls.Add(2);
+                    opcode = "control_if_else";
+                    switch(op){
+                        case Operators.EQUALS:
+                            var o = new Equals_Operator(cond1, cond2);
+                            ls.Add(o.getID());
+                            break;
+                        case Operators.OVER:
+                            var o2 = new Over_Operator(cond1, cond2);
+                            ls.Add(o2.getID());
+                            break;
+                        case Operators.UNDER:
+                            var o3 = new Under_Operator(cond1, cond2);
+                            ls.Add(o3.getID());
+                            break;
+                    } 
+                    inputs.Add("SUBSTACK", null);
+                    inputs.Add("SUBSTACK2", null);
+                    inputs.Add("CONDITION", ls);
+                   
+                }
+            }
+            public class If_Block : Block {
+                public enum Operators {
+                    OVER,
+                    UNDER,
+                    EQUALS
+                };
+                public If_Block(object cond1, Operators op, object cond2){
+                    inputs = new Dictionary<string, List<object>>();
+                    fields = new Dictionary<string, List<object>>();
+                    topLevel = false;
+                    shadow = false;
+                    var ls = new List<object>();
+                    ls.Add(2);
+                    opcode = "control_if";
+                    switch(op){
+                        case Operators.EQUALS:
+                            var o = new Equals_Operator(cond1, cond2);
+                            ls.Add(o.getID());
+                            break;
+                        case Operators.OVER:
+                            var o2 = new Over_Operator(cond1, cond2);
+                            ls.Add(o2.getID());
+                            break;
+                        case Operators.UNDER:
+                            var o3 = new Under_Operator(cond1, cond2);
+                            ls.Add(o3.getID());
+                            break;
+                    }
+                    inputs.Add("SUBSTACK", null);
+                    inputs.Add("CONDITION", ls);
+                    
+                }
+            }
             public class RepeatTimes : Block {
                 public RepeatTimes(int times){
                     opcode = "control_repeat";
