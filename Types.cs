@@ -247,6 +247,28 @@ namespace ScratchSharp {
                 minimized = false;
             }
         }
+       ///<summary> Links a blockchain to a control
+       /// method like "if, while, until"</summary>
+        public class ControlChain {
+            private BlockChain Chain {get; set;}
+            public ControlChain(Block Control, BlockChain bodyChain){
+                var ls = new List<object>();
+                var Body = bodyChain.Chain;
+                ls.Add(2);
+                ls.Add(Body[0].getID());
+                Control.inputs["SUBSTACK"] = ls;
+                var ret = new List<Block>();
+                ret.Add(Control);
+                ret.AddRange(Body);
+                bodyChain.Chain = ret.ToArray();
+                Chain = bodyChain;
+            }
+            ///<summary>get the BlockChain associated with
+            /// this ControlChain</summary>
+            public BlockChain GetChain(){
+                return Chain;
+            }
+        }
         ///<summary>
         /// The most important class of all,
         /// holds all the Blocks you'd drag/drop in
@@ -258,12 +280,41 @@ namespace ScratchSharp {
             public string opcode {get; private set;}
             public string next {get; set;}
             public string parent {get; set;}
-            public Dictionary<string, List<object>> inputs {get; private set;}
-            public Dictionary<string, List<object>> fields {get; private set;}
-            public bool shadow {get; private set;}
-            public bool topLevel {get; private set;}
+            public Dictionary<string, List<object>> inputs {get; set;}
+            public Dictionary<string, List<object>> fields {get; set;}
+            public bool shadow {get; set;}
+            public bool topLevel {get; set;}
             
-            
+
+            public class RepeatTimes : Block {
+                public RepeatTimes(int times){
+                    opcode = "control_repeat";
+                    next = parent = null;
+                    inputs = new Dictionary<string, List<object>>();
+                    fields = new Dictionary<string, List<object>>();
+                    var ls = new List<object>();
+                    ls.Add(1);
+                    ls.Add(new List<object>() {6, times.ToString()});
+                    inputs.Add("TIMES", ls);
+                    inputs.Add("SUBSTACK", new List<object>());
+                }
+            }
+            public class Wait : Block {
+                public Wait(int time){
+                    string t = time.ToString();
+                    opcode = "control_wait";
+                    fields = new Dictionary<string, List<object>>();
+                    inputs = new Dictionary<string, List<object>>();
+                    var ls = new List<object>();
+
+                    ls.Add(1);
+                    ls.Add(new List<object>() {5, t});
+                    inputs.Add("DURATION", ls);
+                    shadow = false;
+                    topLevel = false;
+                    ID = Text.GenerateID();
+                }
+            }
             public class GoBackLayers : Block {
                 public GoBackLayers(int layers){
                     opcode = "looks_goforwardbackwardlayers";
